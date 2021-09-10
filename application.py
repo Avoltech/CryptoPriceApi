@@ -21,7 +21,6 @@ def extractData(crypto_name, start, end):
 	try:
 		baseurl = 'https://finance.yahoo.com/quote/'
 		url = baseurl + crypto_name + '-USD/history?' + 'period1=' + str(start) + '&period2=' + str(end)
-		print(url)
 
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 		page = requests.get(url, headers=headers)
