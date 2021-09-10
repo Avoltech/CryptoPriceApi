@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 def cvtToUnixDate(dt):
 	try:
-		dt = datetime.datetime.strptime(dt, '%m-%d-%y')
+		dt = datetime.datetime.strptime(dt, '%m-%d-%Y')
 	except:
 		dt = datetime.datetime.today()
 	unix_dt = dt.replace(tzinfo=datetime.timezone.utc).timestamp()
@@ -21,6 +21,7 @@ def extractData(crypto_name, start, end):
 	try:
 		baseurl = 'https://finance.yahoo.com/quote/'
 		url = baseurl + crypto_name + '-USD/history?' + 'period1=' + str(start) + '&period2=' + str(end)
+		print(url)
 
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 		page = requests.get(url, headers=headers)
@@ -50,7 +51,7 @@ def extractData(crypto_name, start, end):
 
 		values = [_date, _open, _high, _low, _close, _adj_close, _volume]
 		df = pd.DataFrame(list(zip(_date, _open, _high, _low, _close, _adj_close, _volume)), columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
-		df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
+		# df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
 		df.set_index('Date', inplace=True)
 		return df.to_json()
 	except:
