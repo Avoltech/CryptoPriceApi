@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
 
-
 allowed_cryptos = pd.read_csv('cryptos_allowed.csv', header=None)[0].to_list()
 
 app = Flask(__name__)
@@ -38,6 +37,8 @@ def extractData(crypto_name, start, end):
 
 		for row in rows:
 			cells = row.find_all('td')
+			if cells[6].text == '-':
+				continue
 			datetime_object = datetime.datetime.strptime(cells[0].text, '%b %d, %Y')
 			_date.append(datetime_object)
 			_open.append(float(cells[1].text.replace(',', '')))
@@ -58,9 +59,12 @@ def extractData(crypto_name, start, end):
 
 @app.route('/')
 def index():
-	return f'Home'
+	return f'API 1:<h3><i>/getNames</i></h3>Usage: <h4>https://crypto-api-yf.herokuapp.com/getNames</h4>==>Returns a list of crypto supported by yahoo finance \
+	<br><br><br><br><br>API 2: <h3><i>/getData?name=&lt;insert_crypto_name_here&gt;&start=&lt;insert_start_date_here&gt;&end=&lt;insert_end_date_here&gt;</i></h3>Example: <h4>https://crypto-api-yf.herokuapp.com/getData?name=ETH&start=08-20-2021&end=08-30-2021</h4>==>Returns daily crypto data'
 
-@app.route('/getdata')
+
+
+@app.route('/getData')
 def getData():
 	crypto_name = request.args.get('name')
 	start = request.args.get('start')
@@ -71,3 +75,10 @@ def getData():
 
 	output = extractData(crypto_name, start, end)
 	return f'{output}'
+
+@app.route('/getNames')
+def getNames():
+	df = pd.read_csv('cryptos_allowed.csv', header=None)
+	crypto_list = {'crypto_list': df[0].values.tolist()}
+
+	return f'{crypto_list}'
